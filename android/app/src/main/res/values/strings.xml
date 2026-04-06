@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Placify</string>
+    <string name="title_activity_main">Placify</string>
+    <string name="package_name">com.placify.app</string>
+    <string name="custom_url_scheme">com.placify.app</string>
+</resources>
