@@ -1,14 +1,24 @@
 import fs from 'fs';
 import pdfjsLib from 'pdfjs-dist';
-import pkg from 'canvas';
 import logger from '../../utils/logger.js';
 
 const { getDocument } = pdfjsLib;
-const { DOMMatrix, ImageData, Path2D } = pkg;
 
-global.DOMMatrix = DOMMatrix;
-global.ImageData = ImageData;
-global.Path2D = Path2D;
+// Polyfill browser APIs required by pdfjs-dist in Node.js environment
+// (canvas package removed - these stubs are sufficient for text extraction)
+if (!global.DOMMatrix) {
+  global.DOMMatrix = class DOMMatrix {
+    constructor() { this.a=1;this.b=0;this.c=0;this.d=1;this.e=0;this.f=0; }
+  };
+}
+if (!global.ImageData) {
+  global.ImageData = class ImageData {
+    constructor(w, h) { this.width=w; this.height=h; this.data=new Uint8ClampedArray(w*h*4); }
+  };
+}
+if (!global.Path2D) {
+  global.Path2D = class Path2D {};
+}
 
 export async function extractPdfText(filePath) {
   logger.debug(`[extractPdfText] Starting extraction for: ${filePath}`);
