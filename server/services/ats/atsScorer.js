@@ -6,7 +6,7 @@ import retextRepeatedWords from "retext-repeated-words";
 import retextIndefiniteArticle from "retext-indefinite-article";
 import retextStringify from "retext-stringify";
 import stringSimilarity from "string-similarity";
-import { pipeline } from "@xenova/transformers"; // Example: SBERT via transformers.js (or use OpenAI API)
+// @xenova/transformers removed — too large for free-tier hosting (causes OOM). Using heuristic fallback.
 
 
 const tokenize = (s) => (s?.toLowerCase().match(/[a-z0-9+#.\-]+/g) || []);
@@ -265,30 +265,10 @@ function scoreParseability(resumeText) {
 //   };
 // }
 
-// --- factor 2: semantic similarity (NLP-based) ---
+// --- factor 2: semantic similarity (heuristic-based) ---
+// Using string similarity + jaccard heuristic (ML model removed to reduce memory usage)
 async function scoreSemanticNLP(resumeText, jdText) {
-  // Use SBERT or similar model for embedding-based similarity
-  // This is a placeholder for actual implementation
-  // For production, use a backend service or OpenAI API for embeddings
-  try {
-    const embedder = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
-    const [resumeEmb, jdEmb] = await Promise.all([
-      embedder(resumeText),
-      embedder(jdText)
-    ]);
-    // Compute cosine similarity between embeddings
-    function cosineSimilarity(a, b) {
-      const dot = a.reduce((sum, v, i) => sum + v * b[i], 0);
-      const normA = Math.sqrt(a.reduce((sum, v) => sum + v * v, 0));
-      const normB = Math.sqrt(b.reduce((sum, v) => sum + v * v, 0));
-      return dot / (normA * normB);
-    }
-    const score = Math.round(pct(cosineSimilarity(resumeEmb[0], jdEmb[0])));
-    return { score, cosine: score / 100 };
-  } catch (e) {
-    // Fallback to existing heuristic if NLP fails
-    return scoreSemantic(resumeText, jdText);
-  }
+  return scoreSemantic(resumeText, jdText);
 }
 
 // --- Skill gap analysis ---
