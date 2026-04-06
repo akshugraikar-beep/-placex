@@ -1,11 +1,11 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { jwtDecode } from "jwt-decode";
-
+import apiClient from "../api/apiClient";
 const SimpleAuthPage = () => {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useAuth();
@@ -43,13 +43,10 @@ const SimpleAuthPage = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${API_URL}/api/auth/login`,
-        {
-          email: loginData.email,
-          password: loginData.password,
-        }
-      );
+      const response = await apiClient.post("/auth/login", {
+        email: loginData.email,
+        password: loginData.password,
+      });
 
       const { token, user } = response.data;
 
@@ -102,17 +99,14 @@ const SimpleAuthPage = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${API_URL}/api/auth/register/student`,
-        {
-          fullName: registerData.fullName,
-          university: registerData.university || "Not specified",
-          major: registerData.major || "Not specified",
-          email: registerData.email,
-          password: registerData.password,
-          role: "student",
-        }
-      );
+      const response = await apiClient.post("/auth/register/student", {
+        fullName: registerData.fullName,
+        university: registerData.university || "Not specified",
+        major: registerData.major || "Not specified",
+        email: registerData.email,
+        password: registerData.password,
+        role: "student",
+      });
 
       toast.success("✅ Registration successful! Please login.");
       
