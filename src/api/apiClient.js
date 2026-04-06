@@ -8,12 +8,12 @@ const isDev = import.meta.env.MODE === 'development' || !import.meta.env.PROD;
 let rawBase = import.meta.env.VITE_API_URL;
 if (!rawBase || rawBase === 'undefined' || rawBase === 'null') {
   // Fallback to common local backend port
-  rawBase = 'http://localhost:5000';
+  rawBase = 'http://localhost:5000/api';
 }
 // Remove trailing slash
 rawBase = rawBase.replace(/\/$/, '');
 
-const computedBaseURL = `${rawBase}/api`;
+const computedBaseURL = rawBase;
 
 // Create a new instance of axios with a custom configuration
 const apiClient = axios.create({
