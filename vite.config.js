@@ -1,4 +1,4 @@
-﻿import { defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -70,10 +70,13 @@ export default defineConfig({
       'framer-motion': 'framer-motion',
     },
   },
+  optimizeDeps: {
+    exclude: ['chartjs-node-canvas', '@xenova/transformers', 'canvas'],
+  },
   build: {
     chunkSizeWarningLimit: 4000,
     rollupOptions: {
-      external: [],
+      external: ['chartjs-node-canvas', 'canvas'],
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
