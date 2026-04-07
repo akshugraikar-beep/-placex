@@ -1,4 +1,4 @@
-﻿import express from "express";
+import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -113,14 +113,24 @@ app.use((err, req, res, next) => {
 });
 
 // ====== Start Server ======
-app.listen(port, async () => {
-  logger.debug(`✅ Server running on port ${port}`);
+// Initiate DB connection globally for serverless environments
+if (process.env.VERCEL) {
+  connectToDatabase().catch(err => {
+    logger.error("❌ Vercel Serverless Database connection failed:", err.message);
+  });
+} else {
+  // Only listen on a port if we're not inside Vercel
+  app.listen(port, async () => {
+    logger.debug(`✅ Server running on port ${port}`);
 
-  try {
-    await connectToDatabase();
-    logger.debug("📦 Connected to MongoDB");
-    logger.debug("📧 Ready to send emails!");
-  } catch (dbError) {
-    logger.error("❌ Database connection failed:", dbError.message);
-  }
-});
+    try {
+      await connectToDatabase();
+      logger.debug("📦 Connected to MongoDB");
+      logger.debug("📧 Ready to send emails!");
+    } catch (dbError) {
+      logger.error("❌ Database connection failed:", dbError.message);
+    }
+  });
+}
+
+export default app;

@@ -7,12 +7,14 @@ if (!MONGO_URI) {
   // Don't exit — let server still serve health checks
 }
 
-const connectToDatabase = async (retries = 5) => {
+const connectToDatabase = async (retries = process.env.VERCEL ? 1 : 5) => {
   if (!MONGO_URI) return;
   for (let i = 1; i <= retries; i++) {
     try {
       await mongoose.connect(MONGO_URI, {
-        serverSelectionTimeoutMS: 10000,
+        serverSelectionTimeoutMS: process.env.VERCEL ? 4000 : 10000,
+        bufferCommands: !process.env.VERCEL, // Important for Vercel! Don't buffer commands if connection fails
+        // In serverless, we fail fast to prevent Vercel 10s window from timing out before Express can send an error
       });
       logger.debug("💽 Connected to Database");
       return;
