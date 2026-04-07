@@ -9,6 +9,11 @@ if (!MONGO_URI) {
 
 const connectToDatabase = async (retries = process.env.VERCEL ? 1 : 5) => {
   if (!MONGO_URI) return;
+  
+  if (process.env.VERCEL) {
+    mongoose.set('bufferTimeoutMS', 3000);
+  }
+
   for (let i = 1; i <= retries; i++) {
     try {
       await mongoose.connect(MONGO_URI, {

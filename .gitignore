@@ -193,3 +193,5 @@ Desktop.ini
 *.rar
 *.tar
 *.zip
+
+.vercel
