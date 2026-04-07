@@ -115,9 +115,9 @@ app.use((err, req, res, next) => {
 // ====== Start Server ======
 // Initiate DB connection globally for serverless environments
 if (process.env.VERCEL) {
-  // connectToDatabase().catch(err => {
-  //   logger.error("❌ Vercel Serverless Database connection failed:", err.message);
-  // });
+  connectToDatabase().catch(err => {
+    logger.error("❌ Vercel Serverless Database connection failed:", err.message);
+  });
 } else {
   // Only listen on a port if we're not inside Vercel
   app.listen(port, async () => {
@@ -133,4 +133,7 @@ if (process.env.VERCEL) {
   });
 }
 
-export default app;
+// Export as a native Vercel function handler for reliable execution
+export default function handler(req, res) {
+  return app(req, res);
+}
